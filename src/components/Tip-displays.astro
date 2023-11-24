@@ -1,0 +1,16 @@
+---
+interface Props {
+   title: string;
+   dataAmount: string;
+}
+
+const {title, dataAmount} = Astro.props
+---
+
+<div class="flex justify-between items-center">
+   <div>
+      <p class="text-skin-text-inverted-white font-bold">{title}</p>
+      <p class="text-skin-text-sec text-bodyXs">/ person</p>
+   </div>
+   <span data-amount={dataAmount} class="text-skin-brand-sec font-bold text-bodyXL" >$0</span>
+</div>

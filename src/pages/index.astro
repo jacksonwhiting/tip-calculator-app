@@ -3,14 +3,15 @@ import Header from "../components/Header.astro"
 import Layout from "../layouts/Layout.astro"
 import Input from "../components/Input.astro"
 import TipButtons from "../components/Tip-buttons.astro"
+import TipDisplays from "../components/Tip-displays.astro";
 ---
 
 <Layout title="Tip Calculator App">
-	<div class="bg-skin-canvas-pri pt-12 text-bodyS">
+	<div class="pt-12 text-bodyS">
 		<Header classes="flex justify-center pb-8" />
 		<main
-			class="bg-skin-brand-tert pt-8 max-w-md rounded-lg py-6 px-4 mx-auto">
-			<div>
+			class="bg-skin-brand-tert md:grid md:grid-cols-2 md:gap-6 pt-8 max-w-md md:max-w-4xl rounded-2xl py-6 px-4 md:py-10 md:px-8 mx-auto">
+			<div class="md:max-w-sm">
 				<Input
 					for="bill"
 					labelName="Bill"
@@ -36,7 +37,7 @@ import TipButtons from "../components/Tip-buttons.astro"
 					name="people"
 					id="people"
 					pattern="^\\d+$"
-					placeholder="0"
+					placeholder="0" 
 					errorMsg="Can't be zero"
 					dataName="people">
 					<svg xmlns="http://www.w3.org/2000/svg" width="13" height="16"
@@ -47,6 +48,13 @@ import TipButtons from "../components/Tip-buttons.astro"
 					>
 				</Input>
 			</div>
+			<div class="mt-8 py-8 px-6 rounded-xl bg-skin-brand-pri  md:flex md:flex-col md:justify-between">
+				<div class="space-y-6 md:space-y-8">
+					<TipDisplays dataAmount="tip-amount" title="Tip Amount"></TipDisplays>
+					<TipDisplays dataAmount="per-person" title="Total"></TipDisplays>
+				</div>
+				<button id="reset-btn" class="w-full py-3 bg-skin-brand-sec rounded-lg text-bodyM font-bold text-skin-text-dark">RESET</button>
+			</div>
 		</main>
 	</div>
 </Layout>
@@ -54,28 +62,63 @@ import TipButtons from "../components/Tip-buttons.astro"
 <script>
 	let tipData = {
 		bill: 100,
-		tipPercent: 0.1,
+		tipPercent: 0,
+		totalPeople: 1,
+		get tipAmount () {
+			return (this.bill * this.tipPercent).toFixed(2)
+		},
+		get tipPerPerson () {
+			return (this.tipAmount / this.totalPeople).toFixed(2)
+		}
 	}
 
-	let calcTip = (bill, percent) => {
-		return bill * percent
+	const tipAmountEl = document.querySelector('[data-amount="tip-amount"]')
+	const displayTipAmount = (tipAmount) => {
+		tipAmountEl.textContent = `$${tipAmount}`
 	}
+
+	const totalPerPersonEl = document.querySelector('[data-amount="per-person"]')
+	const displayPerPerson = (totalPerPerson) => {
+		totalPerPersonEl.textContent = `$${totalPerPerson}`
+	}
+
+	const resetBtnEl = document.querySelector('#reset-btn')
+	resetBtnEl.addEventListener('click', (e) => {
+		clearTipData()
+	})
+
+	const billInputEl = document.querySelector("#bill")
+	billInputEl.addEventListener("input", (e) => {
+		tipData.bill = e.target.value
+	})
 
 	const btnGroup = document.querySelectorAll("[data-tip-amounts] button")
-	const tipInputEl = document.querySelector("[data-tip-amounts] input")
-	const billInputEl = document.querySelector("#bill")
 	btnGroup.forEach((element) => {
 		element.addEventListener("click", (e) => {
-			console.log(e.target.value)
-			tipData.tipPercent = e.target.value
-			console.log(calcTip(tipData.bill, tipData.tipPercent))
+			tipData.tipPercent = Number(e.target.value)
+			console.log(tipData.tipPercent)
+			displayTipAmount(tipData.tipAmount)
 		})
 	})
+
+	const tipInputEl = document.querySelector("[data-tip-amounts] input")
 	tipInputEl.addEventListener("input", (e) => {
-		console.log(e.target.value)
+		tipData.tipPercent = Number(e.target.value / 100)
+		console.log(tipData.tipPercent)
 	})
 
-	billInputEl.addEventListener("input", (e) => {
-		console.log(e.target.value)
+	const peopleInputEl = document.querySelector('#people')
+	peopleInputEl?.addEventListener("input", (e) => {
+		tipData.totalPeople = Number(e.target.value)
+		console.log(tipData.totalPeople)
 	})
+
+	const clearTipData = () => {
+		tipAmountEl.textContent = '$0'
+		totalPerPersonEl.textContent = '$0'
+		billInputEl.value = ""
+		tipInputEl.value = ""
+		peopleInputEl.value = ""
+	}
+
 </script>
