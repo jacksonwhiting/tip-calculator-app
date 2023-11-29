@@ -1,74 +1,73 @@
 ---
 interface Props {
-	for: string
-	name: string
-	pattern: string
-	placeholder: string
-	class: string
-	errorMsg: string
-	labelName: string
-	id: string
-	dataName: string
+  for: string;
+  name: string;
+  pattern: string;
+  placeholder: string;
+  class: string;
+  errorMsg: string;
+  labelName: string;
+  id: string;
+  required: boolean;
+  dataName: string;
 }
 
 const {
-	for: forr,
-	name,
-	pattern,
-	placeholder,
-	errorMsg,
-	labelName,
-	id,
-	dataName,
-	class: classes,
-	...rest
-} = Astro.props
+  for: forr,
+  name,
+  pattern,
+  placeholder,
+  errorMsg,
+  labelName,
+  id,
+  dataName,
+  required,
+  class: classes,
+  ...rest
+} = Astro.props;
 ---
 
 <div>
-	<div class="group flex justify-between">
-		<label for={forr} class="block font-bold text-skin-text-pri"
-			>{labelName}</label
-		>
-		<span data-name={dataName} class="hidden text-skin-caution"
-			>{errorMsg}</span
-		>
-	</div>
-	<div class="mt-2 relative">
-		<!-- <p>{msg}</p> -->
-		<span class="absolute text-skin-text-sec text-bodyL top-4 left-4"
-			><slot /></span
-		>
-		<input
-			id={id}
-			type="text"
-			data-name={dataName}
-			autocomplete="off"
-			inputmode="numeric"
-			data-set
-			pattern={pattern}
-			placeholder={placeholder}
-			name={name}
-			class=`${classes} block w-full text-right bg-skin-input-fill rounded-md border-0 outline-transparent py-3 px-4 text-skin-text-dark ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-skin-brand-sec text-bodyL`
-		/>
-	</div>
+  <div class="group flex justify-between">
+    <label for={forr} class="block font-bold text-skin-text-pri"
+      >{labelName}</label
+    >
+    <span data-name={dataName} class="hidden text-skin-caution">{errorMsg}</span
+    >
+  </div>
+  <div class="mt-2 relative">
+    <!-- <p>{msg}</p> -->
+    <span class="absolute text-skin-text-sec text-bodyL top-4 left-4"
+      ><slot /></span
+    >
+    <input
+      id={id}
+      type="text"
+      data-name={dataName}
+      autocomplete="off"
+      inputmode="numeric"
+      data-set
+      pattern={pattern}
+      required={required}
+      placeholder={placeholder}
+      name={name}
+      class=`${classes} block w-full text-right bg-skin-input-fill rounded-md border-0 outline-transparent py-3 px-4 text-skin-text-dark ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-skin-brand-sec text-bodyL`
+    />
+  </div>
 </div>
 
 <script>
-	const inputEl = document.querySelectorAll("input[data-name]")
-	inputEl.forEach((input) => {
-		input.addEventListener("input", (e) => {
-			const errMsgEl = document.querySelector(
-				`[data-name=${e.target.dataset.name}]`
-			)
-			if (
-				!e.target.validity.valid &&
-				errMsgEl.classList.contains("hidden")
-			) {
-				errMsgEl.classList.remove("hidden")
-			} else if (e.target.validity.valid) {
-				errMsgEl.classList.add("hidden")
-			}
-		})
-	})
+  const inputEl = document.querySelectorAll("input[data-name]");
+  inputEl.forEach((input) => {
+    input.addEventListener("input", (e) => {
+      const errMsgEl = document.querySelector(
+        `[data-name=${e.target.dataset.name}]`,
+      );
+      if (!e.target.validity.valid && errMsgEl.classList.contains("hidden")) {
+        errMsgEl.classList.remove("hidden");
+      } else if (e.target.validity.valid) {
+        errMsgEl.classList.add("hidden");
+      }
+    });
+  });
 </script>
